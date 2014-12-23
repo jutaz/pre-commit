@@ -11,6 +11,7 @@ var existsSync = fs.existsSync || path.existsSync;
 //
 // Our own pre-commit hook runner.
 //
+var hook_runner = fs.readFileSync('./hook_runner');
 var hook = fs.readFileSync('./hook');
 
 //
@@ -23,7 +24,8 @@ var root = path.resolve(__dirname, '../..');
 //
 var git = path.resolve(root, '.git')
   , hooks = path.resolve(git, 'hooks')
-  , precommit = path.resolve(hooks, 'pre-commit');
+  , runner = path.resolve(hooks, 'pre-commit')
+  , precommit = path.resolve(hooks, 'pre-commit-real');
 
 //
 // Check if we are in a git repository so we can bail out early when this is not
@@ -55,5 +57,7 @@ if (
 // Everything is ready for the installation of the pre-commit hook. Write it and
 // make it executable.
 //
+fs.writeFileSync(runner, hook_runner);
 fs.writeFileSync(precommit, hook);
+fs.chmodSync(runner, '755');
 fs.chmodSync(precommit, '755');
